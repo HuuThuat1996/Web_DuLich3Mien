@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Thuận">
+
+    <title>Du lịch 3 miền</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../assert/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Fonts -->
+    <link href="../assert/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/animate.css" rel="stylesheet"/>
+    <!-- Squad theme CSS -->
+    <link href="../css/mainstyle.css" rel="stylesheet">
+    <link href="../css/default.css" rel="stylesheet">
+    <!--<link href="css/layout.css" rel="stylesheet">-->
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-custom">
+<!-- nav -->
+<nav class="navbar navbar-custom navbar-fixed-top" role="navigation" style="background:#67b0d1;">
+    <div class="container row">
+        <div class="navbar-header page-scroll col-lg-3">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand" href="/">
+                <h1>Du lịch 3 miền</h1>
+            </a>
+        </div>
+        <div class="col-lg-4">
+            <form method="get" action="search" role="search" id="formSearch">
+                <div class="input-group row">
+                    <input type="text" class="form-control" placeholder="Tìm kiếm" name="infoSearch" id="infoSearch">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn" id="btnSearch">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+            <div>
+                <button class="optionSearch" id="btnAll"
+                        style="background-color: rgba(255, 255, 255, 0); border: none; font-family: inherit; color: #fff;">
+                    Tất cả
+                </button>
+                <button class="optionSearch" id="btnArea"
+                        style="background-color: rgba(255, 255, 255, 0); border: none; font-family: inherit; color: #fff;">
+                    Địa điểm
+                </button>
+                <button class="optionSearch" id="btnFestival"
+                        style="background-color: rgba(255, 255, 255, 0); border: none; font-family: inherit; color: #fff;">
+                    Lễ hội
+                </button>
+            </div>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-right navbar-main-collapse col-lg-6">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/">Trang chủ</a></li>
+                <li><a href="/diadiem">Địa điểm</a></li>
+                <li><a href="/lehoi">Lễ hội</a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+<!-- Section: Top Festival	-->
+<section id="festival" class="home-section text-center" style="margin: 120px 0 0 0; padding: 10px;">
+    <ul class="containerItem" id="sectionFestival">
+
+    </ul>
+    <div style="clear: both;"></div>
+</section>
+<!-- /Section: Tofestival -->
+
+<!-- Core JavaScript Files -->
+<script src="../js/jquery.min.js"></script>
+<script src="../assert/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- <script src="js/jquery.easing.min.js"></script>	 -->
+<!-- <script src="js/jquery.scrollTo.js"></script> -->
+<script src="../js/wow.min.js"></script>
+<!-- Custom Theme JavaScript -->
+<script src="../js/custom.js"></script>
+<script>
+    function loadFestival() {
+        $.ajax({
+            method: 'GET',
+            url: "http://localhost:8084/getfestival",
+            dataType: 'Json',
+            success: function (data) {
+                console.log(JSON.stringify(data, null,2));
+                var content = "";
+                var imgLink="";
+                var items = data.Items;
+                var count = data.Count;
+                var LastEvaluatedKey;
+                if(count = 20){
+                    try{
+                        LastEvaluatedKey = data.LastEvaluatedKey;
+                    }
+                    catch(execption){
+                        LastEvaluatedKey = null;
+                    }
+                }
+                $.each(items, function (index, model) {
+                    imgLink = model.ImageTitle == null?"":model.ImageTitle.url;
+                    content = "<li class='itemindex'>" +
+                        "<article>" +
+                        "<div class='imgTitle'>" +
+                        "<img alt='no image' src='" + imgLink + "'/>" +
+                        "</div>" +
+                        "<div class='itemContent'>" +
+                        "<h6><a href='#lehoi' onClick='redirectFestivalDetails("+"\""+model.FestivalName +"\""+","+model.Timestmap+");'>" + model.FestivalName + "</a></h6>" +
+                        "<p>Thời gian: từ " + model.StartDate + " đến " + model.EndDate + "</p>" +
+                        "<p>Địa điểm: " + model.Address + "</p>" +
+                        "<p class='itemDescript'>" + model.Descript + "</p>" +
+                        "</div>" +
+                        "<div style='clear:both;'></div>" +
+                        "</article>" +
+                        "</li>";
+                    $(content).appendTo($('#sectionFestival'));
+                });
+            },
+            error: function (err) {
+            }
+        });
+    }
+    function redirectFestivalDetails(name, timestmap){
+        window.location.replace("http://localhost:8084/lehoi/thongtin?name=" + name + "&timestmap=" + timestmap);
+    }
+    $(document).ready(function () {
+        //change option search
+        $('.optionSearch').click(function () {
+            var id = $(this).attr('id');
+            if (id == 'btnAll') {
+                $('#formSearch').attr('active', 'all');
+                $('#formSearch').attr('action', 'http://localhost:8084/search');
+                $('#infoSearch').attr('placeholder', 'Tìm kiếm');
+                return 0;
+            }
+            else if (id == 'btnFestival') {
+                $('#formSearch').attr('active', 'festival');
+                $('#formSearch').attr('action', 'http://localhost:8084/festival/search');
+                $('#infoSearch').attr('placeholder', 'Tìm kiếm lễ hội');
+                return 0;
+            }
+            else if (id == 'btnArea') {
+                $('#formSearch').attr('active', 'area');
+                $('#formSearch').attr('action', 'http://localhost:8084/area/search');
+                $('#infoSearch').attr('placeholder', 'Tìm kiếm địa danh');
+                return 0;
+            }
+        });
+        loadFestival();
+    });
+</script>
+
+</body>
+
+</html>

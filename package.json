@@ -1,0 +1,12 @@
+{
+  "name": "dulich3mien",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node sever"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.111.0",
+    "diacritic": "0.0.2",
+    "formidable": "^1.1.1"
+  }
+}

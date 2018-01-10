@@ -1,0 +1,5 @@
+{ 
+  "AWS_REGION": "us-east-1",
+  "STARTUP_SIGNUP_TABLE": "Area",
+  "NEW_SIGNUP_TOPIC": "arn:aws:sns:us-east-1:210920289354:DuLich3Mien"
+}
